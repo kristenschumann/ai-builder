@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Builder — Automation Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --color-bg:       #FFFFEB;
+  --color-warm:     #FFFDF9;
+  --color-muted:    #E4E4D0;
+  --color-dark:     #1A1A1A;
+  --color-teal:     #034F46;
+  --color-lavender: #F0D7FF;
+  --color-amber:    #FFA946;
+  --color-white:    #FFFFFF;
+  --font-heading:   'EB Garamond', Georgia, serif;
+  --font-body:      'Figtree', Arial, sans-serif;
+  --radius-card:    24px;
+  --radius-btn:     12px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-dark);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header-wrap { padding: 32px 48px; }
+
+.header-inner {
+  background: var(--color-dark);
+  color: var(--color-bg);
+  border-radius: 32px;
+  padding: 52px 64px 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.header-title {
+  font-family: var(--font-heading);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -1.9px;
+  color: var(--color-bg);
+  max-width: 520px;
+}
+
+.header-title em { font-style: italic; color: var(--color-amber); }
+
+.header-meta { text-align: right; flex-shrink: 0; }
+
+.header-sub {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255,255,235,0.5);
+  margin-bottom: 12px;
+}
+
+.header-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--color-lavender);
+  border-radius: 999px;
+  color: var(--color-lavender);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 14px;
+}
+
+/* ── BOARD ── */
+.board-wrap { padding: 0 48px 64px; overflow-x: auto; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(280px, 1fr));
+  gap: 16px;
+  min-width: 1100px;
+}
+
+/* ── COLUMN ── */
+.column {
+  border-radius: var(--radius-card);
+  padding: 24px 20px;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: background-color 0.15s ease;
+}
+
+.column.suggested  { background: var(--color-muted); opacity: 0.75; }
+.column.to-build   { background: #F5F5DC; border: 1.5px solid #D8D8C0; }
+.column.in-progress { background: #EBF4F2; border: 1.5px solid #B0D4CE; }
+.column.done        { background: #F0F0F0; border: 1.5px solid #D0D0D0; }
+
+.column.drag-over {
+  outline: 2px dashed var(--color-teal);
+  outline-offset: -2px;
+}
+
+/* ── COLUMN HEADER ── */
+.col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid rgba(26,26,26,0.1);
+  margin-bottom: 4px;
+}
+
+.col-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--color-dark);
+}
+
+.col-count {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(26,26,26,0.08);
+  border-radius: 999px;
+  padding: 3px 10px;
+  color: var(--color-dark);
+}
+
+.column.suggested .col-title { color: #555; }
+.column.suggested .col-count { background: rgba(0,0,0,0.08); color: #555; }
+.column.in-progress .col-title { color: var(--color-teal); }
+
+/* ── CARD ── */
+.card {
+  background: var(--color-white);
+  border-radius: 16px;
+  padding: 20px 20px 16px;
+  cursor: grab;
+  user-select: none;
+  transition: opacity 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  border: 1px solid rgba(26,26,26,0.06);
+  position: relative;
+}
+
+.card:hover { box-shadow: 0 4px 16px rgba(26,26,26,0.08); }
+.card:active { cursor: grabbing; }
+.card.dragging { opacity: 0.4; transform: scale(0.98); }
+
+.column.suggested .card { background: rgba(255,255,255,0.55); border-color: rgba(26,26,26,0.08); }
+.column.done .card { opacity: 0.65; }
+
+.card-click-hint {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ccc;
+  font-family: var(--font-body);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.card:hover .card-click-hint { opacity: 1; }
+
+.card-icon {
+  font-size: 22px;
+  margin-bottom: 10px;
+  display: block;
+  line-height: 1;
+}
+
+.card-name {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  color: var(--color-dark);
+  margin-bottom: 7px;
+  padding-right: 28px;
+}
+
+.card-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #555;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.priority-badge {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.priority-badge.high   { background: rgba(255,169,70,0.18); color: #A0600A; border: 1.5px solid rgba(255,169,70,0.4); }
+.priority-badge.medium { background: rgba(3,79,70,0.08); color: var(--color-teal); border: 1.5px solid rgba(3,79,70,0.2); }
+.priority-badge.low    { background: rgba(26,26,26,0.05); color: #888; border: 1.5px solid rgba(26,26,26,0.12); }
+
+.card-time {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+}
+
+/* ── EMPTY STATE ── */
+.col-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(26,26,26,0.25);
+  pointer-events: none;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 0 48px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-text { font-family: var(--font-body); font-size: 13px; color: #999; }
+
+.reset-btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+  background: none;
+  border: 1.5px solid #D0D0C0;
+  border-radius: var(--radius-btn);
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.reset-btn:hover { background: var(--color-muted); color: var(--color-dark); }
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,26,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.modal-overlay.open { display: flex; }
+
+/* ── MODAL PANEL ── */
+.modal {
+  background: var(--color-bg);
+  border-radius: 32px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modal-in 0.2s ease-out;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── MODAL HEADER (dark) ── */
+.modal-header {
+  background: var(--color-dark);
+  border-radius: 32px 32px 0 0;
+  padding: 40px 44px 36px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,235,0.2);
+  background: transparent;
+  color: rgba(255,255,235,0.6);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.modal-close:hover { background: rgba(255,255,255,0.1); color: var(--color-bg); }
+
+.modal-icon { font-size: 28px; margin-bottom: 14px; display: block; }
+
+.modal-title {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
+  color: var(--color-bg);
+  margin-bottom: 14px;
+  max-width: 560px;
+}
+
+.modal-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-priority {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.modal-priority.high   { background: rgba(255,169,70,0.2); color: var(--color-amber); border: 1.5px solid rgba(255,169,70,0.3); }
+.modal-priority.medium { background: rgba(3,79,70,0.3); color: #7ECFC4; border: 1.5px solid rgba(3,79,70,0.5); }
+.modal-priority.low    { background: rgba(255,255,255,0.06); color: #aaa; border: 1.5px solid rgba(255,255,255,0.1); }
+
+.modal-time-saved {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,235,0.5);
+}
+
+/* ── MODAL BODY ── */
+.modal-body { padding: 36px 44px 44px; }
+
+.modal-section { margin-bottom: 32px; }
+
+.modal-section:last-child { margin-bottom: 0; }
+
+.modal-section-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.modal-problem {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: #444;
+  line-height: 1.65;
+  padding: 16px 20px;
+  background: var(--color-muted);
+  border-radius: 14px;
+  border-left: 3px solid var(--color-amber);
+}
+
+/* ── STAGES ── */
+.stages { display: flex; flex-direction: column; gap: 12px; }
+
+.stage-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  background: var(--color-white);
+  border-radius: 14px;
+  border: 1px solid rgba(26,26,26,0.07);
+}
+
+.stage-tag {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+
+.stage-tag.v1 { background: rgba(240,215,255,0.5); color: #7B4FA0; border: 1px solid rgba(123,79,160,0.2); }
+.stage-tag.v2 { background: rgba(3,79,70,0.08); color: var(--color-teal); border: 1px solid rgba(3,79,70,0.2); }
+.stage-tag.v3 { background: rgba(255,169,70,0.12); color: #A0600A; border: 1px solid rgba(255,169,70,0.3); }
+
+.stage-content {}
+
+.stage-headline {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  color: var(--color-dark);
+  margin-bottom: 4px;
+}
+
+.stage-detail {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #666;
+  line-height: 1.55;
+}
+
+/* ── TOOLS + SUCCESS ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.info-box {
+  background: var(--color-white);
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid rgba(26,26,26,0.07);
+}
+
+.info-box-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.info-box-content {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.tool-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(3,79,70,0.07);
+  color: var(--color-teal);
+  border: 1px solid rgba(3,79,70,0.15);
+  margin: 2px 3px 2px 0;
+}
+
+/* ── NOTION LINK ── */
+.notion-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-dark);
+  background: var(--color-lavender);
+  border: 1.5px solid var(--color-dark);
+  border-radius: var(--radius-btn);
+  padding: 10px 20px;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+  margin-top: 8px;
+}
+.notion-link:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header-wrap">
+  <div class="header-inner">
+    <div class="header-title">Automation<br><em>Roadmap</em></div>
+    <div class="header-meta">
+      <div class="header-sub">AI Builder L2 &middot; April 2026</div>
+      <div class="header-pill">Kristen Hansen</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOARD -->
+<div class="board-wrap">
+  <div class="board" id="board">
+
+    <div class="column suggested" id="col-suggested" data-col="suggested">
+      <div class="col-header">
+        <div class="col-title">Suggested</div>
+        <div class="col-count" id="count-suggested">0</div>
+      </div>
+      <div class="col-empty">Ideas land here</div>
+    </div>
+
+    <div class="column to-build" id="col-to-build" data-col="to-build">
+      <div class="col-header">
+        <div class="col-title">To Build</div>
+        <div class="col-count" id="count-to-build">0</div>
+      </div>
+    </div>
+
+    <div class="column in-progress" id="col-in-progress" data-col="in-progress">
+      <div class="col-header">
+        <div class="col-title">In Progress</div>
+        <div class="col-count" id="count-in-progress">0</div>
+      </div>
+      <div class="col-empty">Nothing yet</div>
+    </div>
+
+    <div class="column done" id="col-done" data-col="done">
+      <div class="col-header">
+        <div class="col-title">Done</div>
+        <div class="col-count" id="count-done">0</div>
+      </div>
+      <div class="col-empty">Ship something</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-text">Click a card to open the project plan &middot; Drag to move &middot; State saves automatically</div>
+  <button class="reset-btn" id="reset-btn">Reset board</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <button class="modal-close" id="modal-close">✕</button>
+      <span class="modal-icon" id="modal-icon"></span>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-meta">
+        <span class="modal-priority" id="modal-priority"></span>
+        <span class="modal-time-saved" id="modal-time-saved"></span>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const CARDS = [
+  {
+    id: 'student-ops',
+    icon: '📥',
+    name: 'Student ops handle themselves',
+    desc: 'Route, auto-respond, and escalate cohort issues without landing in Kristen\'s inbox.',
+    priority: 'high',
+    time: '3–4h/wk',
+    notionUrl: 'https://www.notion.so/34ca84f4c7d281e6a802e5625258a58b',
+    plan: {
+      problem: 'Cohort switches, broken Slack links, missing calendar invites — all landing in Kristen\'s inbox and being handled personally. Duplicate replies already firing. Macy exists but only gets looped in after Kristen has already engaged. Every cohort launch triggers a wave of issues that absorbs 3–4 hours of direct GM attention weekly.',
+      stages: [
+        {
+          tag: 'v1',
+          headline: 'Template library + routing prompt',
+          detail: 'Build a response library for the 5 most common student issues (cohort switch, broken link, missing invite, Slack access, session reschedule). Kristen applies the right template in 30 seconds instead of writing from scratch. Macy gets a copy of each send.'
+        },
+        {
+          tag: 'v2',
+          headline: 'n8n classification and auto-routing',
+          detail: 'Student email in → classify issue type → auto-respond with the right template OR route to Macy with issue type, student context, and suggested reply pre-filled. Kristen only sees true escalations — things that require a judgment call.'
+        },
+        {
+          tag: 'v3',
+          headline: 'Full intake bot with weekly digest',
+          detail: 'Students submit via a structured form → LLM resolves or triages → Macy handles exceptions → Kristen receives a weekly digest only. Zero inbox touch for routine cohort ops.'
+        }
+      ],
+      tools: ['n8n', 'Gmail', 'Slack', 'Claude API'],
+      success: 'Kristen spends zero unplanned time on student ops in any given week. Escalations reach her pre-triaged with full context.'
+    }
+  },
+  {
+    id: 'revenue-dashboard',
+    icon: '📊',
+    name: 'Revenue and enrollment status update themselves',
+    desc: 'Daily KPI bot posts MTD revenue, enrollment count, and pace vs. goal to Slack.',
+    priority: 'medium',
+    time: '2–3h/wk',
+    notionUrl: 'https://www.notion.so/34ca84f4c7d281ee98ebc26199b4c0a8',
+    plan: {
+      problem: '#gm-courses-targets was near-silent for the entire 14-day tracking window. Revenue tracking happens manually or not at all during AI Builder delivery sprints. When Kristen is heads-down on curriculum, the business goes dark — no one knows if enrollment pace is on track until it\'s too late to react.',
+      stages: [
+        {
+          tag: 'v1',
+          headline: 'Daily KPI bot to Slack',
+          detail: 'Databricks query → Slack post to #gm-courses-targets every morning with: MTD revenue vs. target, enrollment count vs. pace, days until cohort start. The pattern already exists — just needs to be automated and scheduled.'
+        },
+        {
+          tag: 'v2',
+          headline: 'Enrollment pace alert',
+          detail: 'If weekly enrollment pace falls below 70% of target, an alert fires automatically with context: current pace, gap to goal, and days remaining. Proactive signal instead of a lagging Monday-morning report.'
+        },
+        {
+          tag: 'v3',
+          headline: 'Full revenue intelligence digest',
+          detail: 'Attribution, funnel conversion, cohort projections → weekly digest to Kristen and stakeholders. She reviews the summary and flags anomalies, not the raw data. Includes recommended actions when pace is off.'
+        }
+      ],
+      tools: ['Databricks', 'n8n', 'Slack', 'Claude API'],
+      success: 'Revenue and enrollment data visible to the team without Kristen touching it. Alerts fire before problems become crises.'
+    }
+  },
+  {
+    id: 'curriculum-cadence',
+    icon: '🚀',
+    name: 'AI Builder curriculum ships on cadence',
+    desc: 'Brief → build → QA → deploy without Kristen in the production chain.',
+    priority: 'high',
+    time: '4–5h/wk',
+    notionUrl: 'https://www.notion.so/34ca84f4c7d281b68dd4f7252620120d',
+    plan: {
+      problem: '100% of session building is Kristen. She writes curriculum at 1–2am, posts to Slack, then delegates downstream work — but "downstream" still requires her to be the trigger. No sustainable cadence exists. When delivery is heavy, building stops. When she\'s building, delivery suffers.',
+      stages: [
+        {
+          tag: 'v1',
+          headline: 'Session build template + Caleb owns downstream',
+          detail: 'Standardized session brief template that Kristen fills in 20–30 minutes. Caleb owns all downstream steps: building the deck, QA, deploying to GitHub. Kristen writes content decisions only — not production execution.'
+        },
+        {
+          tag: 'v2',
+          headline: 'Automated production workflow',
+          detail: 'Kristen writes session brief → Caleb builds deck → QA bot checks against design and content standards → auto-deploys on merge. No back-and-forth. Kristen gets a Slack ping when the session is live, not during production.'
+        },
+        {
+          tag: 'v3',
+          headline: 'AI-first authoring pipeline',
+          detail: 'AI generates first draft from brief and prior session patterns → Kristen edits 20% → publish workflow fires → distribution automation runs. She is the editor and final reviewer, not the author. Sessions ship on cadence regardless of what else is happening.'
+        }
+      ],
+      tools: ['Claude API', 'GitHub', 'n8n', 'Notion', 'Slack'],
+      success: 'Sessions ship on schedule whether or not Kristen is in delivery mode. Production never blocks on her availability.'
+    }
+  },
+  {
+    id: 'coach-recording',
+    icon: '🎬',
+    name: 'Coach recording goes live without me',
+    desc: 'Clear criteria + automation so coaches get the go-ahead without a 12-day wait.',
+    priority: 'high',
+    time: '1–2h/wk',
+    notionUrl: 'https://www.notion.so/34ca84f4c7d2817fbb1cdacf80e13ff4',
+    plan: {
+      problem: 'Bruce waited 12 days for Kristen to say "start recording." She is the production gate for every self-study coach recording session — not because she needs to be, but because no one else has the criteria or authority to give the green light. This delays production and signals a broken delegation model.',
+      stages: [
+        {
+          tag: 'v1',
+          headline: 'Production checklist with Caleb as owner',
+          detail: 'Define the exact criteria that unlock recording: script approved, slide deck finalized, recording setup confirmed. Caleb owns the checklist and sends the go-ahead when all boxes are checked. Kristen only reviews the first recording per new coach — not every session.'
+        },
+        {
+          tag: 'v2',
+          headline: 'n8n auto-send on milestone completion',
+          detail: 'Coach completes the milestone checklist → n8n detects completion → auto-sends "you\'re cleared to record" with recording guidelines, timeline, and submission links. Zero manual step from Caleb or Kristen.'
+        },
+        {
+          tag: 'v3',
+          headline: 'Full quality-gated production pipeline',
+          detail: 'Automated quality gates at each production stage. Kristen only sees blockers (coach missed a milestone) and signs off on the first completed recording per coach as a one-time calibration. Everything else runs itself.'
+        }
+      ],
+      tools: ['n8n', 'Notion', 'Slack', 'Gmail'],
+      success: 'No coach waits more than 24 hours for a go-ahead after completing their pre-recording checklist. Kristen is not in the critical path.'
+    }
+  },
+  {
+    id: 'coach-contracting',
+    icon: '✍️',
+    name: 'Coach contracting is a single click',
+    desc: 'Standardized DocuSign flow with auto-reminders kills the 14-email thread.',
+    priority: 'high',
+    time: '1h/wk',
+    notionUrl: 'https://www.notion.so/34ca84f4c7d281bb86cdd183e60c7676',
+    plan: {
+      problem: 'Allie Kronthal contract: 14 emails over 2 months. DocuSign version confusion. Still unresolved as of Apr 10. Contract loops absorb hours of Kristen\'s attention and create awkward coach relationships. There is no standard contract send process — each new coach is a from-scratch negotiation.',
+      stages: [
+        {
+          tag: 'v1',
+          headline: 'Standardized contract template + DocuSign prefill',
+          detail: 'One clean contract template with DocuSign prefill for coach name, course, rate, and start date. One send link per coach — no version confusion. Caleb sends; Kristen reviews only before the first send per coach type (new contract type or rate tier).'
+        },
+        {
+          tag: 'v2',
+          headline: 'n8n auto-reminders and escalation',
+          detail: 'Contract sent → auto-reminder at day 3 → follow-up at day 7 → escalate to Kristen only if unsigned by day 14. Kristen gets one notification per contract, not 14 emails.'
+        },
+        {
+          tag: 'v3',
+          headline: 'Full onboarding trigger on signature',
+          detail: 'DocuSign signed → HubSpot updated → Slack notification → calendar invite sent → production checklist created automatically. Zero manual steps between contract signature and coach fully onboarded.'
+        }
+      ],
+      tools: ['DocuSign', 'n8n', 'HubSpot', 'Slack', 'Google Calendar'],
+      success: 'Every coach contract is sent, followed up, and closed without Kristen writing a single email. She sees one Slack ping when it\'s signed.'
+    }
+  },
+  {
+    id: 'auto-populate-roadmap',
+    icon: '🔄',
+    name: 'Auto-populate roadmap from session transcripts',
+    desc: 'After each Claude Code session, scan transcripts and suggest automation cards for the Suggested column.',
+    priority: 'medium',
+    time: null,
+    notionUrl: 'https://www.notion.so/34ca84f4c7d281129e7febb5e58be350',
+    plan: null
+  },
+  {
+    id: 'daily-advisor-schedule',
+    icon: '⏰',
+    name: 'Build daily advisor agent triggered on schedule',
+    desc: 'Schedule the automation advisor to run each morning and post the roadmap brief to Slack automatically.',
+    priority: 'medium',
+    time: null,
+    notionUrl: 'https://www.notion.so/34ca84f4c7d28109be3dc6b24ea97fab',
+    plan: null
+  }
+];
+
+const DEFAULT_COL = {
+  'auto-populate-roadmap': 'suggested',
+  'daily-advisor-schedule': 'suggested'
+};
+CARDS.forEach(c => { if (!DEFAULT_COL[c.id]) DEFAULT_COL[c.id] = 'to-build'; });
+
+const COL_TO_STATUS = {
+  'suggested':   'Suggested',
+  'to-build':    'To Build',
+  'in-progress': 'In Progress',
+  'done':        'Done'
+};
+const STATUS_TO_COL = {
+  'Suggested':   'suggested',
+  'To Build':    'to-build',
+  'In Progress': 'in-progress',
+  'Done':        'done'
+};
+
+function extractPageId(url) {
+  if (!url) return null;
+  const m = url.match(/([a-f0-9]{32})/);
+  if (!m) return null;
+  const h = m[1];
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+
+// notionPageId → colId, populated on fetch
+let notionState = {};
+
+function buildCard(card) {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.draggable = true;
+  el.dataset.id = card.id;
+  el.innerHTML = `
+    <span class="card-click-hint">Open ↗</span>
+    <span class="card-icon">${card.icon}</span>
+    <div class="card-name">${card.name}</div>
+    <div class="card-desc">${card.desc}</div>
+    <div class="card-footer">
+      <span class="priority-badge ${card.priority}">${card.priority}</span>
+      <span class="card-time">${card.time}</span>
+    </div>
+  `;
+  return el;
+}
+
+function updateCounts() {
+  ['suggested', 'to-build', 'in-progress', 'done'].forEach(colId => {
+    const col = document.getElementById('col-' + colId);
+    const count = col.querySelectorAll('.card').length;
+    document.getElementById('count-' + colId).textContent = count;
+    const empty = col.querySelector('.col-empty');
+    if (empty) empty.style.display = count > 0 ? 'none' : 'flex';
+  });
+}
+
+function openModal(cardId) {
+  const card = CARDS.find(c => c.id === cardId);
+  if (!card) return;
+
+  if (!card.plan) {
+    document.getElementById('modal-icon').textContent = card.icon;
+    document.getElementById('modal-title').textContent = card.name;
+    const priorityEl = document.getElementById('modal-priority');
+    priorityEl.textContent = card.priority || 'suggested';
+    priorityEl.className = 'modal-priority ' + (card.priority || 'low');
+    document.getElementById('modal-time-saved').textContent = '';
+    document.getElementById('modal-body').innerHTML = `
+      <div class="modal-section">
+        <div class="modal-problem">${card.desc}</div>
+      </div>
+      ${card.notionUrl ? `<div class="modal-section"><a class="notion-link" href="${card.notionUrl}" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2h11A2.5 2.5 0 0 1 20 4.5v15a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 19.5v-15Z" stroke="currentColor" stroke-width="1.5"/><path d="M9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Open in Notion</a></div>` : ''}
+    `;
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  const p = card.plan;
+
+  document.getElementById('modal-icon').textContent = card.icon;
+  document.getElementById('modal-title').textContent = card.name;
+
+  const priorityEl = document.getElementById('modal-priority');
+  priorityEl.textContent = card.priority;
+  priorityEl.className = 'modal-priority ' + card.priority;
+
+  document.getElementById('modal-time-saved').textContent = card.time + ' reclaimed';
+
+  const toolTags = p.tools.map(t => `<span class="tool-tag">${t}</span>`).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-label">The problem</div>
+      <div class="modal-problem">${p.problem}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Build stages</div>
+      <div class="stages">
+        ${p.stages.map(s => `
+          <div class="stage-row">
+            <span class="stage-tag ${s.tag}">${s.tag}</span>
+            <div class="stage-content">
+              <div class="stage-headline">${s.headline}</div>
+              <div class="stage-detail">${s.detail}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="two-col">
+        <div class="info-box">
+          <div class="info-box-label">Tools</div>
+          <div class="info-box-content">${toolTags}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">Done when</div>
+          <div class="info-box-content">${p.success}</div>
+        </div>
+      </div>
+    </div>
+    ${card.notionUrl ? `
+    <div class="modal-section">
+      <a class="notion-link" href="${card.notionUrl}" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2h11A2.5 2.5 0 0 1 20 4.5v15a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 19.5v-15Z" stroke="currentColor" stroke-width="1.5"/><path d="M9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Open project spec in Notion
+      </a>
+    </div>` : ''}
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+const COLS = {
+  'suggested':   document.getElementById('col-suggested'),
+  'to-build':    document.getElementById('col-to-build'),
+  'in-progress': document.getElementById('col-in-progress'),
+  'done':        document.getElementById('col-done')
+};
+
+async function fetchRoadmap() {
+  const res = await fetch('/api/roadmap');
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  const rows = await res.json();
+  rows.forEach(row => {
+    const col = STATUS_TO_COL[row.status];
+    if (col) notionState[row.id] = col;
+  });
+}
+
+function renderCards() {
+  document.querySelectorAll('.card').forEach(c => c.remove());
+  CARDS.forEach(card => {
+    const pageId = extractPageId(card.notionUrl);
+    const colId = (pageId && notionState[pageId]) || DEFAULT_COL[card.id] || 'to-build';
+    const col = COLS[colId];
+    if (col) col.appendChild(buildCard(card));
+  });
+  initDrag();
+  updateCounts();
+}
+
+async function render() {
+  try {
+    await fetchRoadmap();
+  } catch (e) {
+    console.warn('Could not fetch from Notion, using defaults:', e);
+  }
+  renderCards();
+}
+
+let draggedId = null;
+let mouseDownPos = { x: 0, y: 0 };
+let didDrag = false;
+
+function initDrag() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousedown', e => {
+      mouseDownPos = { x: e.clientX, y: e.clientY };
+      didDrag = false;
+    });
+
+    card.addEventListener('dragstart', e => {
+      draggedId = card.dataset.id;
+      didDrag = true;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      draggedId = null;
+    });
+
+    card.addEventListener('click', e => {
+      const dx = Math.abs(e.clientX - mouseDownPos.x);
+      const dy = Math.abs(e.clientY - mouseDownPos.y);
+      if (dx < 6 && dy < 6) {
+        openModal(card.dataset.id);
+      }
+    });
+  });
+}
+
+document.querySelectorAll('.column').forEach(col => {
+  col.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    col.classList.add('drag-over');
+  });
+
+  col.addEventListener('dragleave', e => {
+    if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+  });
+
+  col.addEventListener('drop', async e => {
+    e.preventDefault();
+    col.classList.remove('drag-over');
+    if (!draggedId) return;
+
+    const card = CARDS.find(c => c.id === draggedId);
+    if (!card?.notionUrl) return;
+
+    const pageId = extractPageId(card.notionUrl);
+    const targetColId = col.dataset.col;
+    const statusName = COL_TO_STATUS[targetColId];
+    if (!pageId || !statusName) return;
+
+    // Optimistic update — move card immediately, persist in background
+    notionState[pageId] = targetColId;
+    draggedId = null;
+    renderCards();
+
+    fetch('/api/roadmap', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: pageId, status: statusName })
+    }).catch(err => console.error('Notion PATCH failed:', err));
+  });
+});
+
+document.getElementById('reset-btn').addEventListener('click', render);
+
+render();
+</script>
+</body>
+</html>

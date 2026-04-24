@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Audit — Kristen Hansen</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #21253a;
+    --border: #2a2f45;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 40px 24px 80px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+  h2 { font-size: 1.25rem; font-weight: 600; color: #fff; margin-bottom: 16px; }
+  h3 { font-size: 1rem; font-weight: 600; color: var(--accent2); margin-bottom: 8px; }
+  p { color: var(--muted); margin-bottom: 8px; }
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .badge span { color: var(--text); font-weight: 500; }
+  .goal-pill {
+    display: inline-block;
+    background: linear-gradient(135deg, #3730a3 0%, #6366f1 100%);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+  section { margin-bottom: 56px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card.accent { border-color: var(--accent); }
+  .stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bar-label { width: 130px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .bar-label.wide { width: 180px; }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+  .bar-val { font-size: 13px; color: var(--muted); width: 48px; text-align: right; flex-shrink: 0; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .tag-green { background: #064e3b; color: #34d399; }
+  .tag-yellow { background: #78350f; color: #fcd34d; }
+  .tag-red { background: #7f1d1d; color: #fca5a5; }
+  .tag-blue { background: #1e3a5f; color: #93c5fd; }
+  .tag-purple { background: #2d1b69; color: #c4b5fd; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 9px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  .observation {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .observation.warn { border-left-color: var(--yellow); }
+  .observation.danger { border-left-color: var(--red); }
+  .observation strong { color: #fff; }
+  .automation-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .automation-card:hover { border-color: var(--accent); }
+  .automation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .automation-title { font-size: 1.05rem; font-weight: 600; color: #fff; }
+  .effort-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .effort-quick { background: #064e3b; color: #34d399; }
+  .effort-medium { background: #78350f; color: #fcd34d; }
+  .effort-big { background: #1e3a5f; color: #93c5fd; }
+  .automation-field { margin-bottom: 12px; }
+  .automation-field label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .automation-field p { color: var(--text); font-size: 14px; margin: 0; }
+  .reclaim {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .goal-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .goal-row:last-child { border-bottom: none; }
+  .goal-text { font-size: 14px; font-weight: 600; color: var(--text); }
+  .goal-analysis { font-size: 14px; color: var(--muted); }
+  .goal-analysis strong { color: var(--text); }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    display: inline-block; margin-right: 6px; vertical-align: middle;
+  }
+  .sources-list { list-style: none; }
+  .sources-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    gap: 12px;
+  }
+  .sources-list li:last-child { border-bottom: none; }
+  .sources-list .source-name { color: var(--text); font-weight: 500; }
+  .sources-list .source-meta { color: var(--muted); text-align: right; }
+  footer {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+  .inline-stat { display: inline-flex; align-items: baseline; gap: 4px; }
+  .highlight { color: var(--accent2); font-weight: 600; }
+  .warning { color: var(--yellow); font-weight: 600; }
+  .danger-text { color: var(--red); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">Time Audit · Kristen Hansen · GM of Courses, Leland</div>
+  <h1>Where My Time Actually Goes</h1>
+  <div class="goal-pill">Top Goal: Scale AI Builder to $209k/mo run rate</div>
+  <div class="header-meta">
+    <div class="badge">Date: <span>April 21, 2026</span></div>
+    <div class="badge">Analysis window: <span>Apr 6–21, 2026 (11 weekdays)</span></div>
+    <div class="badge">Role: <span>GM of Courses</span></div>
+  </div>
+</div>
+
+
+<!-- SECTION 1: HOW I ACTUALLY SPEND MY TIME -->
+<section>
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>How I Actually Spend My Time</h2>
+  </div>
+
+  <!-- App Usage -->
+  <h3>App Usage — Top 10 Apps (11 weekdays, 8am–6:30pm)</h3>
+  <div class="card" style="margin-bottom:24px;">
+    <table>
+      <thead>
+        <tr>
+          <th>App</th>
+          <th>Hours</th>
+          <th>Sessions</th>
+          <th>What it's for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Chrome</strong></td>
+          <td>28.0h</td>
+          <td>2,427</td>
+          <td style="color:var(--muted)">Everything — course production, Notion, Gmail, Calendar, HubSpot, GitHub</td>
+        </tr>
+        <tr>
+          <td><strong>Claude Code</strong> <span class="tag tag-purple">AI</span></td>
+          <td>26.8h</td>
+          <td>1,551</td>
+          <td style="color:var(--muted)">Course HTML, slides, automation scripts, session builds</td>
+        </tr>
+        <tr>
+          <td><strong>Claude Desktop</strong> <span class="tag tag-purple">AI</span></td>
+          <td>16.4h</td>
+          <td>2,263</td>
+          <td style="color:var(--muted)">Writing, thinking, research, drafts</td>
+        </tr>
+        <tr>
+          <td><strong>Slack</strong></td>
+          <td>12.1h</td>
+          <td>1,228</td>
+          <td style="color:var(--muted)">Student support, team comms, cohort channels</td>
+        </tr>
+        <tr>
+          <td><strong>Zoom</strong></td>
+          <td>5.8h</td>
+          <td>573</td>
+          <td style="color:var(--muted)">Live L1 and L2 sessions, dry runs, standups</td>
+        </tr>
+        <tr>
+          <td><strong>Ghostty</strong> (Terminal)</td>
+          <td>3.2h</td>
+          <td>404</td>
+          <td style="color:var(--muted)">Running Claude Code, git, local dev</td>
+        </tr>
+        <tr>
+          <td><strong>WhatsApp</strong></td>
+          <td>0.4h</td>
+          <td>57</td>
+          <td style="color:var(--muted)">Personal/team comms</td>
+        </tr>
+        <tr>
+          <td><strong>Messages</strong></td>
+          <td>0.4h</td>
+          <td>75</td>
+          <td style="color:var(--muted)">Quick team/personal messages</td>
+        </tr>
+        <tr>
+          <td><strong>Spotify</strong></td>
+          <td>0.3h</td>
+          <td>46</td>
+          <td style="color:var(--muted)">Background music during work</td>
+        </tr>
+        <tr>
+          <td><strong>Wispr Flow</strong></td>
+          <td>0.1h</td>
+          <td>33</td>
+          <td style="color:var(--muted)">Voice-to-text for rapid writing</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:13px; color:var(--muted)">
+      <strong style="color:var(--accent2)">Claude total (Code + Desktop): 43.2h</strong> — the #1 tool by combined hours. More time with AI tools than any other category.
+    </div>
+  </div>
+
+  <!-- Browser Categories -->
+  <h3>Browser Activity — Category Breakdown (work hours, weekdays)</h3>
+  <div class="card" style="margin-bottom:24px;">
+    <div class="bar-row">
+      <div class="bar-label wide">Docs / Course Work</div>
+      <div class="bar-track"><div class="bar-fill" style="width:39%;background:#6366f1"></div></div>
+      <div class="bar-val">39%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 12px 190px;">lelandcourses.com (559), Notion (446), GitHub (157), Google Docs (120), Google Drive (114), coach portal (109)</div>
+    <div class="bar-row">
+      <div class="bar-label wide">Other / Utility</div>
+      <div class="bar-track"><div class="bar-fill" style="width:32%;background:#475569"></div></div>
+      <div class="bar-val">32%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 12px 190px;">localhost dev, Google, Typeform, Calendly, DoorDash</div>
+    <div class="bar-row">
+      <div class="bar-label wide">Comms</div>
+      <div class="bar-track"><div class="bar-fill" style="width:11%;background:#14b8a6"></div></div>
+      <div class="bar-val">11%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 12px 190px;">Google Calendar (297), Gmail (116), Slack web (27), Zoom (24)</div>
+    <div class="bar-row">
+      <div class="bar-label wide">CRM / Ops</div>
+      <div class="bar-track"><div class="bar-fill" style="width:8%;background:#f59e0b"></div></div>
+      <div class="bar-val">8%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 12px 190px;">HubSpot (163), builders.leland.ai (93)</div>
+    <div class="bar-row">
+      <div class="bar-label wide">Social Media</div>
+      <div class="bar-track"><div class="bar-fill" style="width:7%;background:#ef4444"></div></div>
+      <div class="bar-val">7%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 12px 190px;">LinkedIn (178 visits), X/Twitter (128 visits)</div>
+    <div class="bar-row">
+      <div class="bar-label wide">AI Tools (web)</div>
+      <div class="bar-track"><div class="bar-fill" style="width:2%;background:#818cf8"></div></div>
+      <div class="bar-val">2%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 0 190px;">claude.ai (97 visits) — Claude Code handles most AI work</div>
+  </div>
+
+  <!-- Meeting Breakdown -->
+  <h3>Meeting Breakdown (14 weekdays: Apr 2–21)</h3>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="stat-number">57.3h</div>
+      <div class="stat-label">Actual meetings (14 days)</div>
+      <div style="margin-top:12px; font-size:13px; color:var(--muted)">Avg <strong style="color:var(--text)">4.1h/day</strong> in real meetings</div>
+    </div>
+    <div class="card">
+      <div class="stat-number">56</div>
+      <div class="stat-label">Back-to-back pairs (zero gap)</div>
+      <div style="margin-top:12px; font-size:13px; color:var(--muted)">Avg <strong style="color:var(--text)">4 back-to-back pairs/day</strong></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:24px;">
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Hours</th><th>Events</th><th>Examples</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dot" style="background:#6366f1"></span>Team meetings</td>
+          <td>38.0h</td>
+          <td>48</td>
+          <td style="color:var(--muted); font-size:13px;">Daily delivery standup, L1/L2 guide reviews, debrief holds, dry runs, curriculum sessions</td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#ec4899"></span>External calls</td>
+          <td>10.8h</td>
+          <td>13</td>
+          <td style="color:var(--muted); font-size:13px;">L1 student live sessions, landing page kickoff, growth sync, event</td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#14b8a6"></span>1:1s</td>
+          <td>8.5h</td>
+          <td>14</td>
+          <td style="color:var(--muted); font-size:13px;">Nick (3x), Weston (1x), Vin (1x), check-ins (3x), student office hours (2x)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
+      <div style="font-size:13px; color:var(--muted); margin-bottom:8px;"><strong style="color:#fff;">Recurring meetings:</strong></div>
+      <div style="font-size:13px; color:var(--muted); line-height:2;">
+        <span class="tag tag-blue">13x</span> AI Builder Delivery Standup (daily 15 min)
+        <span class="tag tag-blue">7x</span> Lunch hold
+        <span class="tag tag-blue">6x</span> BUILD focus block
+        <span class="tag tag-blue">4x</span> L1 Debrief Hold
+        <span class="tag tag-blue">4x</span> Luca coaching session
+        <span class="tag tag-blue">4x</span> Elijah coaching session
+        <span class="tag tag-blue">3x</span> Nick 1:1
+      </div>
+    </div>
+    <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:13px; color:var(--muted);">
+      <strong style="color:var(--yellow);">Worst back-to-back chains:</strong> Apr 6 had 9 consecutive events with no gaps — session → debrief → test → TA sync → feedback calls → L2 session → debrief → intern 1:1 → Nick 1:1 → coaching sessions. Apr 16 was similar.
+    </div>
+  </div>
+
+  <!-- Email & Slack -->
+  <h3>Email & Slack Patterns (last 2 weeks)</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="color:var(--text); margin-bottom:12px;">What I Send Repeatedly</h3>
+      <ul style="list-style:none; font-size:14px; color:var(--muted); line-height:2.2;">
+        <li>↩ <strong style="color:var(--text)">Recording access answers</strong> — "Yes, check your dashboard within 24h"</li>
+        <li>↩ <strong style="color:var(--text)">Cohort switch confirmations</strong> — same response sent 4x to one student</li>
+        <li>↩ <strong style="color:var(--text)">Support forwards</strong> — collecting issue → forwarding to support@</li>
+        <li>↩ <strong style="color:var(--text)">Instructor coordination</strong> — GRE coach slide reviews (5+ thread replies over weeks)</li>
+        <li>↩ <strong style="color:var(--text)">Email test forwards</strong> — HubSpot test sends forwarded to team</li>
+        <li>↩ <strong style="color:var(--text)">Self-briefings</strong> — Daily K-12 and AI news sent to self</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--text); margin-bottom:12px;">What I Field Repeatedly</h3>
+      <ul style="list-style:none; font-size:14px; color:var(--muted); line-height:2.2;">
+        <li>📩 "Where are the session recordings?"</li>
+        <li>📩 "Can I switch to a different cohort?"</li>
+        <li>📩 "Will sessions be recorded if I miss them?"</li>
+        <li>📩 "I can't access my Leland+ account"</li>
+        <li>📩 Slack #help — receipt requests, access questions, setup issues</li>
+        <li>📩 Slack DMs from students — same questions as email</li>
+      </ul>
+      <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:13px; color:var(--muted);">
+        Top senders to me: ellie@, nick@, notifications (Leland platform), GitHub CI, Slackbot (new member joins)
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION 2: KEY DIAGNOSTICS -->
+<section>
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>Key Diagnostics</h2>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:24px;">
+    <div class="card accent">
+      <div class="stat-number" style="color:var(--red)">946</div>
+      <div class="stat-label">Avg app switches/day</div>
+      <div style="margin-top:8px; font-size:13px; color:var(--muted)">Peak: <strong style="color:var(--red)">1,447 switches</strong> on Apr 20 (launch prep day)</div>
+    </div>
+    <div class="card">
+      <div class="stat-number">4.1h</div>
+      <div class="stat-label">Avg meetings/day</div>
+      <div style="margin-top:8px; font-size:13px; color:var(--muted)">With <strong style="color:var(--yellow)">4 back-to-back pairs</strong> avg — no recovery time</div>
+    </div>
+    <div class="card">
+      <div class="stat-number" style="color:var(--accent2)">43h</div>
+      <div class="stat-label">AI tool usage (11 days)</div>
+      <div style="margin-top:8px; font-size:13px; color:var(--muted)">Claude Code + Claude Desktop — <strong style="color:var(--accent2)">#1 by combined hours</strong></div>
+    </div>
+  </div>
+
+  <!-- Context switching -->
+  <div class="card" style="margin-bottom:16px;">
+    <h3 style="margin-bottom:12px;">Context Switching by Day</h3>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Day</th><th>Switches</th><th>vs. Avg</th><th>What Was Happening</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Apr 6</td><td>Mon</td><td>289</td><td><span class="tag tag-green">–69%</span></td><td style="font-size:13px;color:var(--muted)">First L1 + L2 sessions — focus, not fragmentation</td></tr>
+          <tr><td>Apr 7</td><td>Tue</td><td>816</td><td style="color:var(--muted)">normal</td><td style="font-size:13px;color:var(--muted)">Curriculum lock + growth sync</td></tr>
+          <tr><td>Apr 8</td><td>Wed</td><td>693</td><td style="color:var(--muted)">normal</td><td style="font-size:13px;color:var(--muted)">L2 curriculum draft + office hours</td></tr>
+          <tr><td>Apr 9</td><td>Thu</td><td>1,394</td><td><span class="tag tag-red">+47%</span></td><td style="font-size:13px;color:var(--muted)">L1 session day + L2 session + multiple syncs</td></tr>
+          <tr><td>Apr 10</td><td>Fri</td><td>795</td><td style="color:var(--muted)">normal</td><td style="font-size:13px;color:var(--muted)">L1 S5 walkthrough, lighter day</td></tr>
+          <tr><td>Apr 13</td><td>Mon</td><td>773</td><td style="color:var(--muted)">normal</td><td style="font-size:13px;color:var(--muted)">L1 session + guide reviews</td></tr>
+          <tr><td>Apr 14</td><td>Tue</td><td>1,181</td><td><span class="tag tag-yellow">+25%</span></td><td style="font-size:13px;color:var(--muted)">All-hands + pricing + curriculum sync + event setup</td></tr>
+          <tr><td>Apr 15</td><td>Wed</td><td>1,098</td><td><span class="tag tag-yellow">+16%</span></td><td style="font-size:13px;color:var(--muted)">3h session guide marathon + office hours + email testing</td></tr>
+          <tr><td>Apr 16</td><td>Thu</td><td>817</td><td style="color:var(--muted)">normal</td><td style="font-size:13px;color:var(--muted)">L1 final session + 2 guide reviews + live event demo</td></tr>
+          <tr><td>Apr 17</td><td>Fri</td><td>753</td><td style="color:var(--muted)">normal</td><td style="font-size:13px;color:var(--muted)">L3 scoping (2h) + deliverable review</td></tr>
+          <tr><td>Apr 20</td><td>Mon</td><td style="color:var(--red);font-weight:700">1,447</td><td><span class="tag tag-red">+53%</span></td><td style="font-size:13px;color:var(--muted)">L1+L2 dry run day — peak fragmentation</td></tr>
+          <tr><td>Apr 21</td><td>Tue</td><td style="color:var(--red);font-weight:600">1,300</td><td><span class="tag tag-red">+37%</span></td><td style="font-size:13px;color:var(--muted)">Launch day — two L1 sessions + L2 session</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Meeting vs Deep Work -->
+  <h3>Meeting Load vs. Deep Work Ratio</h3>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="stat-number">4.1h</div>
+      <div class="stat-label">Avg meetings/day</div>
+      <div style="margin-top:12px;">
+        <div class="bar-row">
+          <div class="bar-label">Meetings</div>
+          <div class="bar-track"><div class="bar-fill" style="width:49%;background:#ef4444"></div></div>
+          <div class="bar-val">4.1h</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Claude/building</div>
+          <div class="bar-track"><div class="bar-fill" style="width:46%;background:#6366f1"></div></div>
+          <div class="bar-val">3.9h</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Browser/comms</div>
+          <div class="bar-track"><div class="bar-fill" style="width:36%;background:#475569"></div></div>
+          <div class="bar-val">~3h</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--text); margin-bottom:12px;">Top 3 Time Drains</h3>
+      <div style="margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+        <div style="font-size:14px; font-weight:600; color:var(--red); margin-bottom:4px;">1. Repetitive student support</div>
+        <div style="font-size:13px; color:var(--muted);">Same 4–5 questions answered manually via email + Slack, multiple times per day, by me personally as GM.</div>
+      </div>
+      <div style="margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+        <div style="font-size:14px; font-weight:600; color:var(--yellow); margin-bottom:4px;">2. Back-to-back meeting chains</div>
+        <div style="font-size:13px; color:var(--muted);">56 back-to-back pairs in 14 days — no buffer to synthesize, recover, or think between sessions. Every delivery day is a wall of events.</div>
+      </div>
+      <div>
+        <div style="font-size:14px; font-weight:600; color:var(--yellow); margin-bottom:4px;">3. Instructor coordination drag</div>
+        <div style="font-size:13px; color:var(--muted);">GRE slide review thread = 10+ exchanges over 5+ weeks, still not resolved. Same pattern with VC course coach. Long email chains with no clear handoff system.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:16px 20px; background:var(--surface); border-radius:8px; border:1px solid var(--border); font-size:14px; color:var(--muted);">
+    <strong style="color:var(--text);">Reactive vs. proactive split (estimated):</strong> ~70% reactive — meeting-driven, support-driven, coordination-driven. ~30% proactive — BUILD blocks, curriculum creation, L3 scoping. The proactive time is where the best work happens; it's being squeezed by the reactive load.
+  </div>
+</section>
+
+
+<!-- SECTION 3: OBSERVATIONS -->
+<section>
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>3 Sharp Observations</h2>
+  </div>
+
+  <div class="observation">
+    <strong>You are genuinely AI-native — but the gains are going into delivery, not scale.</strong><br>
+    <span style="color:var(--muted);">43 hours of Claude usage in 11 days is real. That's nearly 4 hours/day with AI tools. But scan where it goes: slide HTML, session guides, animations, curriculum builds. This is production throughput — making L1 and L2 run. The gap is that almost none of that AI time is going toward L3–L5 design or the revenue levers (conversion, pricing, marketing funnel). You're using AI to go faster on the right track, but the track itself hasn't expanded to the strategic goals yet.</span>
+  </div>
+
+  <div class="observation warn">
+    <strong>You're personally answering questions a bot could handle — at GM-level cost.</strong><br>
+    <span style="color:var(--muted);">The sent-mail data shows you replied to Allie about a cohort switch 4 separate times. Recording access questions came in via email and Slack from 5+ students this week alone, each getting a personal reply from the GM. The answers never change: "Yes, recordings are on your dashboard within 24h." "I'll flag you to our ops team." This is a queue management problem, not a customer service problem. You're the last mile on work that should never reach you.</span>
+  </div>
+
+  <div class="observation danger">
+    <strong>LinkedIn + X are 7.4% of your work-hour browser visits — during a launch week.</strong><br>
+    <span style="color:var(--muted);">178 LinkedIn visits and 128 X visits during work hours, 8am–6:30pm, across 11 weekdays. That's ~28 visits per day to social platforms. This is during the same period you ran L1 final sessions, launched the Apr 21 cohort, and had 56 back-to-back meeting pairs. It's likely partly intentional (posting, competitor research, AI news) — but the volume warrants a look. If even 40% is mindless checking, that's ~45 minutes/day of attention fragmentation on top of the 946 context switches.</span>
+  </div>
+</section>
+
+
+<!-- SECTION 4: GOAL ALIGNMENT -->
+<section>
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>Goal Alignment</h2>
+  </div>
+
+  <div class="card">
+    <div class="goal-row">
+      <div>
+        <div class="goal-text">Hit $209k/mo revenue run rate</div>
+        <span class="tag tag-yellow" style="margin-top:4px; display:inline-block;">Under-indexed</span>
+      </div>
+      <div class="goal-analysis">
+        Calendar has <strong>zero dedicated time</strong> for conversion optimization, pricing iteration, or marketing funnel work. One AIBP Pricing meeting (30 min, Apr 14) and an event (Apr 16 live demo). The revenue lever is enrollment pace — but there's no regular block for reviewing pipeline, testing conversion points, or building sales infrastructure. Revenue tracking isn't visible in any data source accessed.
+      </div>
+    </div>
+    <div class="goal-row">
+      <div>
+        <div class="goal-text">Deliver exceptional L1 and L2 cohorts</div>
+        <span class="tag tag-green" style="margin-top:4px; display:inline-block;">Strong alignment</span>
+      </div>
+      <div class="goal-analysis">
+        This is where most time goes. <strong>Daily delivery standups (13x), guide reviews, dry runs, debrief holds, curriculum sessions.</strong> The production pipeline is running. L1 Mar 30 cohort completed, L2 Apr 21 launched. The risk here is that delivery work is consuming bandwidth that should go to goal #3.
+      </div>
+    </div>
+    <div class="goal-row">
+      <div>
+        <div class="goal-text">L3–L5 designed and in production</div>
+        <span class="tag tag-red" style="margin-top:4px; display:inline-block;">Not happening</span>
+      </div>
+      <div class="goal-analysis">
+        <strong>One 2-hour "Level 3 Scoping" block on Apr 17.</strong> That's it. In 14 days. L3–L5 is a Q2 success criterion, and it's getting ~14 minutes/day of calendar space. The delivery machine for L1/L2 is crowding it out entirely. This needs a protected weekly block with real forcing functions.
+      </div>
+    </div>
+    <div class="goal-row">
+      <div>
+        <div class="goal-text">Lead well (focused, intense, kind, AI-native)</div>
+        <span class="tag tag-yellow" style="margin-top:4px; display:inline-block;">Mixed</span>
+      </div>
+      <div class="goal-analysis">
+        AI-native: clearly happening. Focused: harder to say — 946 context switches/day and 56 back-to-backs suggest high fragmentation. <strong>What's missing in the data:</strong> no evidence of weekly planning/review rhythm beyond "Plan &amp; prioritize week" blocks. Intern direction is ad-hoc (calendar block "make plan for what each intern needs to work on"). Leadership leverage is underdeveloped.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION 5: AUTOMATION OPPORTUNITIES -->
+<section>
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>Automation Opportunities</h2>
+  </div>
+  <p style="margin-bottom:24px; color:var(--muted);">Ranked by impact: hours reclaimed × alignment to top goal. All estimates are drafts.</p>
+
+  <!-- Opp 1 -->
+  <div class="automation-card">
+    <div class="automation-header">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">#1 · Highest Impact</div>
+        <div class="automation-title">Student support is handled without me touching it</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="effort-badge effort-medium">Medium lift</span>
+        <span class="reclaim">~3h/week</span>
+      </div>
+    </div>
+    <div class="automation-field">
+      <label>Outcome</label>
+      <p>Students get accurate, warm answers to recording access, cohort switch, and session timing questions within minutes — without me or anyone on my team drafting responses.</p>
+    </div>
+    <div class="automation-field">
+      <label>What's happening today</label>
+      <p>I personally respond to 5–10 student emails and Slack messages per day with the same 4–5 answers. One student got 4 separate replies about a cohort switch. Estimated 30–45 min/day of GM time.</p>
+    </div>
+    <div class="automation-field">
+      <label>What the automated version looks like</label>
+      <p>n8n workflow monitors the cohort Slack #help channel and a support email address. Incoming message → Claude reads it + classifies the question → pulls the right template answer → sends reply. Cohort switch requests → auto-creates a ticket in Linear/Notion for Ellie or ops to action, sends student a "noted, we'll get you moved" confirmation. Anything outside the known patterns → escalates to human with draft.</p>
+    </div>
+  </div>
+
+  <!-- Opp 2 -->
+  <div class="automation-card">
+    <div class="automation-header">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">#2 · High Impact</div>
+        <div class="automation-title">Student onboarding and pre-session comms run on autopilot</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="effort-badge effort-quick">Quick win</span>
+        <span class="reclaim">~2h/week</span>
+      </div>
+    </div>
+    <div class="automation-field">
+      <label>Outcome</label>
+      <p>Every student gets perfectly timed, personalized pre-session reminders, setup instructions, and post-session recording links — without manual sending or forwarding.</p>
+    </div>
+    <div class="automation-field">
+      <label>What's happening today</label>
+      <p>HubSpot test sends get forwarded manually to the team. Recording links are referenced verbally. Setup instructions are repeated in Slack and email responses. Multiple email exchanges are triggered by information gaps that a good onboarding sequence would close.</p>
+    </div>
+    <div class="automation-field">
+      <label>What the automated version looks like</label>
+      <p>HubSpot sequences fully built out: enrollment → welcome → pre-session (24h before) → post-session recording link (auto-triggered by Zoom webhook). Slack Slackbot welcome message auto-answers top 5 questions on join. I review and approve templates once; the system runs every cohort.</p>
+    </div>
+  </div>
+
+  <!-- Opp 3 -->
+  <div class="automation-card">
+    <div class="automation-header">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">#3 · High Impact</div>
+        <div class="automation-title">Instructor coordination has a clear status system, not an email thread</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="effort-badge effort-medium">Medium lift</span>
+        <span class="reclaim">~2h/week</span>
+      </div>
+    </div>
+    <div class="automation-field">
+      <label>Outcome</label>
+      <p>GRE coaches, VC course partners, and TAs always know exactly what's pending, what's been reviewed, and what's next — without long email threads and me as the tracking system.</p>
+    </div>
+    <div class="automation-field">
+      <label>What's happening today</label>
+      <p>GRE slide review thread has 10+ emails over 5+ weeks (Eric, Matt, Bruce). The VC course partner thread started in January and is still open. I'm the only one tracking status, and it leaks into my inbox constantly.</p>
+    </div>
+    <div class="automation-field">
+      <label>What the automated version looks like</label>
+      <p>Notion database for each instructor: one row per deliverable, with status (awaiting slides, in review, feedback sent, approved, recorded). Claude Code generates a weekly digest of what's blocked and what's overdue. Auto-email to instructors when status changes. I set the status; the system nags on my behalf.</p>
+    </div>
+  </div>
+
+  <!-- Opp 4 -->
+  <div class="automation-card">
+    <div class="automation-header">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">#4 · Medium Impact</div>
+        <div class="automation-title">L3–L5 design gets protected time with a weekly forcing function</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="effort-badge effort-quick">Quick win</span>
+        <span class="reclaim">~3h/week freed up</span>
+      </div>
+    </div>
+    <div class="automation-field">
+      <label>Outcome</label>
+      <p>L3–L5 curriculum gets 3+ dedicated hours per week on the calendar, treated as non-negotiable, with a weekly output checkpoint.</p>
+    </div>
+    <div class="automation-field">
+      <label>What's happening today</label>
+      <p>L3–L5 received exactly 2 hours of calendar time in a 14-day window. It's being fully displaced by L1/L2 delivery work. Without a hard block, it won't happen until L1/L2 delivery pressure drops — which won't be until after L3–L5 was due.</p>
+    </div>
+    <div class="automation-field">
+      <label>What the automated version looks like</label>
+      <p>Recurring 3h block on calendar every Tuesday or Wednesday, marked "L3–L5 Design" — immovable. Paired with a weekly Claude Code session to run the `/session-slide-outline` and `/create-session-guide` pipeline. Scheduled reminder to Nick each Friday with 1-sentence L3 progress update.</p>
+    </div>
+  </div>
+
+  <!-- Opp 5 -->
+  <div class="automation-card">
+    <div class="automation-header">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">#5 · Medium Impact</div>
+        <div class="automation-title">Session debrief insights are captured and actioned without a meeting</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="effort-badge effort-medium">Medium lift</span>
+        <span class="reclaim">~1.5h/week</span>
+      </div>
+    </div>
+    <div class="automation-field">
+      <label>Outcome</label>
+      <p>Post-session insights (what worked, what to change, student questions) are captured automatically from Zoom recordings and converted into action items — without a live debrief meeting after every session.</p>
+    </div>
+    <div class="automation-field">
+      <label>What's happening today</label>
+      <p>The calendar has a 30-min "L1 Debrief Hold" blocked after every single L1 session (4 in this window). That's 2h of live debrief time. The meeting captures patterns that a Zoom transcript + Claude analysis could surface faster.</p>
+    </div>
+    <div class="automation-field">
+      <label>What the automated version looks like</label>
+      <p>Zoom recording → Granola transcript → Claude reads it → generates structured debrief doc (top student questions, confusion points, energy moments, suggested changes for next session) → drops into Notion session folder. Debrief hold becomes async: I review the Claude doc in 10 minutes instead of a 30-min live call.</p>
+    </div>
+  </div>
+
+  <!-- Opp 6 -->
+  <div class="automation-card">
+    <div class="automation-header">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">#6 · Quick Win</div>
+        <div class="automation-title">Revenue pulse is visible without pulling it</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="effort-badge effort-quick">Quick win</span>
+        <span class="reclaim">~1h/week</span>
+      </div>
+    </div>
+    <div class="automation-field">
+      <label>Outcome</label>
+      <p>Every Monday morning I see: enrollment count vs. target, revenue vs. $209k, pacing to hit the goal, and top 3 bottlenecks — without pulling any data manually.</p>
+    </div>
+    <div class="automation-field">
+      <label>What's happening today</label>
+      <p>No data source in the 14-day window showed revenue tracking or enrollment dashboards. The $209k goal is the #1 metric, but there's no visible system for monitoring pacing or spotting shortfalls early.</p>
+    </div>
+    <div class="automation-field">
+      <label>What the automated version looks like</label>
+      <p>Scheduled n8n workflow pulls enrollment data from Databricks (leland_analytics.ai.bookings) + HubSpot pipeline. Claude generates a 5-line Monday briefing: revenue MTD, sessions sold, pace to goal, top enrollment source, flag if below track. Drops into Slack DM to me every Monday at 8am.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION 6: DATA SOURCES -->
+<section>
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>Data Sources</h2>
+  </div>
+  <div class="card">
+    <ul class="sources-list">
+      <li>
+        <span class="source-name">Mac App Usage (knowledgeC.db)</span>
+        <span class="source-meta">Apr 6–21, 2026 · 11 weekdays · 14,838 records · 8am–6:30pm weekdays only</span>
+      </li>
+      <li>
+        <span class="source-name">Chrome Browser History (Profile 5: kristen@joinleland.com)</span>
+        <span class="source-meta">Apr 2–21, 2026 · Work hours, weekdays · Top 30 domains analyzed</span>
+      </li>
+      <li>
+        <span class="source-name">Google Calendar (MCP)</span>
+        <span class="source-meta">Apr 2–21, 2026 · 14 weekdays · 134 events · Declined + cancelled excluded</span>
+      </li>
+      <li>
+        <span class="source-name">Gmail — Sent Mail (MCP)</span>
+        <span class="source-meta">Last 30 days · 50 threads analyzed · Pattern identification only</span>
+      </li>
+      <li>
+        <span class="source-name">Gmail — Inbox (MCP)</span>
+        <span class="source-meta">Last 14 days · 50 threads analyzed · Recurring senders and topics</span>
+      </li>
+      <li>
+        <span class="source-name">Slack (MCP — lelandaibuilders.slack.com)</span>
+        <span class="source-meta">Apr 2–21, 2026 · Sent messages + received messages · Top channels and DM patterns</span>
+      </li>
+    </ul>
+    <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:13px; color:var(--muted);">
+      <strong style="color:var(--text);">Note on calendar hours:</strong> The "focus_block" category includes large calendar placeholder blocks (e.g., 9h "Block — AI Builder prep"). These are holds, not measured deep work sessions. Real meeting hours (team + external + 1:1) = 57.3h over 14 days.
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  Time Audit — April 21, 2026 | Part of my AI Builder Automation Portfolio<br>
+  <span style="color:var(--border);">Generated with Claude Code · kristen@joinleland.com</span>
+</footer>
+
+</body>
+</html>

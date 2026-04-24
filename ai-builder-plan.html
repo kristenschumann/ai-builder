@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kristen's AI Automation Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg:       #FFFFEB;
+      --color-dark:     #1A1A1A;
+      --color-teal:     #034F46;
+      --color-lavender: #F0D7FF;
+      --color-muted:    #E4E4D0;
+      --color-amber:    #FFA946;
+      --font-heading:   'EB Garamond', Georgia, serif;
+      --font-body:      'Figtree', Arial, sans-serif;
+    }
+
+    body {
+      background: var(--color-bg);
+      color: var(--color-dark);
+      font-family: var(--font-body);
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── ANNOUNCEMENT BAR ── */
+    .announcement-bar {
+      background: var(--color-teal);
+      color: var(--color-bg);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      padding: 10px 16px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── HERO / HEADER ── */
+    .hero {
+      padding: 120px 2rem 100px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero > *:not(.hero-bg) {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* floating circles */
+    .hero-bg .c1 {
+      position: absolute;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(3,79,70,0.12);
+      top: -120px; left: -160px;
+    }
+    .hero-bg .c2 {
+      position: absolute;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(240,215,255,0.22);
+      top: 40px; right: -80px;
+      animation: floatB 8s ease-in-out infinite;
+    }
+    .hero-bg .c3 {
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,169,70,0.18);
+      bottom: 0px; left: 38%;
+      animation: floatA 10s ease-in-out infinite;
+    }
+    .hero-bg .c4 {
+      position: absolute;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255,169,70,0.12);
+      top: 80px; left: 22%;
+      animation: floatB 7s ease-in-out infinite 1s;
+    }
+    .hero-bg .dot-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(3,79,70,0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    @keyframes floatA {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-18px); }
+    }
+    @keyframes floatB {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50%       { transform: translateY(14px) scale(1.03); }
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--color-teal);
+      border-radius: 999px;
+      color: var(--color-teal);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 16px;
+      margin-bottom: 48px;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(72px, 10vw, 120px);
+      font-weight: 400;
+      line-height: 0.85;
+      letter-spacing: -6px;
+      color: var(--color-dark);
+      margin-bottom: 40px;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--color-teal);
+    }
+
+    .hero-meta {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: #555;
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .hero-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── SECTION HEADINGS ── */
+    h2 {
+      font-family: var(--font-heading);
+      font-size: 64px;
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: -1.9px;
+      margin-bottom: 48px;
+    }
+
+    h3 {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    /* ── TIME SUMMARY SECTION (dark) ── */
+    .section-dark-wrap {
+      padding: 0 2rem;
+      margin: 0 0 0 0;
+    }
+
+    .section-dark {
+      background: var(--color-dark);
+      color: var(--color-bg);
+      border-radius: 32px;
+      padding: 80px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-dark h2 {
+      color: var(--color-bg);
+    }
+
+    .learnings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 56px;
+    }
+
+    .learning-card {
+      border-top: 1.5px solid #333;
+      padding-top: 24px;
+    }
+
+    .learning-number {
+      font-family: var(--font-heading);
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--color-amber);
+      margin-bottom: 16px;
+    }
+
+    .learning-card h3 {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -0.5px;
+      color: var(--color-bg);
+      margin-bottom: 10px;
+    }
+
+    .learning-card p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: #aaa;
+    }
+
+    .audit-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-lavender);
+      color: var(--color-dark);
+      border: 1.5px solid var(--color-dark);
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 28px;
+      text-decoration: none;
+      transition: opacity 0.15s ease;
+    }
+    .audit-link:hover { opacity: 0.85; }
+
+    /* ── WHAT I'M BUILDING SECTION ── */
+    .section-light {
+      padding: 100px 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 64px;
+    }
+
+    .section-header p {
+      font-size: 18px;
+      color: #555;
+      max-width: 600px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .auto-card {
+      background: var(--color-bg);
+      border: 1.5px solid var(--color-muted);
+      border-radius: 24px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .auto-card:hover {
+      border-color: var(--color-teal);
+    }
+
+    .card-rank {
+      font-family: var(--font-heading);
+      font-size: 72px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -3px;
+      color: var(--color-muted);
+      position: absolute;
+      top: 24px;
+      right: 32px;
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge-quick {
+      background: #E6F4F1;
+      color: var(--color-teal);
+      border: 1.5px solid var(--color-teal);
+    }
+
+    .badge-medium {
+      background: #FFF4E6;
+      color: #B86A00;
+      border: 1.5px solid #FFA946;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.8px;
+      margin-bottom: 8px;
+      padding-right: 60px;
+    }
+
+    .card-outcome {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 28px;
+      font-style: italic;
+    }
+
+    .card-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-top: 1px solid var(--color-muted);
+      margin-bottom: 24px;
+    }
+
+    .card-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-muted);
+      font-size: 15px;
+    }
+
+    .card-row-label {
+      font-family: var(--font-body);
+      font-weight: 600;
+      color: #888;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-top: 2px;
+    }
+
+    .card-row-value {
+      font-family: var(--font-body);
+      color: var(--color-dark);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hours-badge {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: -1px;
+      color: var(--color-teal);
+    }
+
+    .hours-label {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      border: 1.5px solid var(--color-muted);
+      border-radius: 999px;
+      padding: 4px 14px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-muted);
+    }
+
+    /* ── MY SYSTEM SECTION (dark) ── */
+    .my-system-wrap {
+      padding: 0 2rem 100px;
+    }
+
+    .my-system-inner {
+      background: var(--color-teal);
+      border-radius: 32px;
+      padding: 80px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .my-system-inner h2 {
+      color: var(--color-bg);
+      margin-bottom: 16px;
+    }
+
+    .system-subtitle {
+      font-family: var(--font-body);
+      font-size: 18px;
+      color: rgba(255,255,235,0.65);
+      margin-bottom: 56px;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .sprint-card {
+      background: rgba(255,255,235,0.08);
+      border: 1.5px solid rgba(255,255,235,0.15);
+      border-radius: 16px;
+      padding: 28px 24px;
+      opacity: 0.55;
+    }
+
+    .sprint-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,235,0.5);
+      margin-bottom: 12px;
+    }
+
+    .sprint-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -0.5px;
+      color: rgba(255,255,235,0.7);
+    }
+
+    .sprint-pill {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,235,0.4);
+      border: 1px solid rgba(255,255,235,0.15);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-top: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .sprint-1-card {
+      background: rgba(255,255,235,0.12);
+      border-color: rgba(255,255,235,0.3);
+      opacity: 1;
+    }
+
+    .sprint-1-card .sprint-label { color: rgba(255,255,235,0.7); }
+    .sprint-1-card .sprint-title { color: var(--color-bg); }
+    .sprint-1-card .sprint-pill {
+      background: var(--color-lavender);
+      color: var(--color-dark);
+      border-color: transparent;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 48px 2rem;
+      text-align: center;
+      border-top: 1px solid var(--color-muted);
+    }
+
+    footer p {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: #888;
+    }
+
+    /* ── FADE IN ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.5s ease-out forwards;
+    }
+
+    .fade-up-1 { animation-delay: 0.05s; }
+    .fade-up-2 { animation-delay: 0.15s; }
+    .fade-up-3 { animation-delay: 0.25s; }
+
+    @media (max-width: 900px) {
+      .learnings-grid { grid-template-columns: 1fr; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .system-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-dark, .my-system-inner { padding: 48px 32px; }
+      h1 { font-size: 56px; letter-spacing: -3px; }
+      h2 { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="announcement-bar">
+    AI Builder Program — Sprint 1 · April 2026
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="dot-grid"></div>
+      <div class="c1"></div>
+      <div class="c2"></div>
+      <div class="c3"></div>
+      <div class="c4"></div>
+    </div>
+    <div class="fade-up fade-up-1">
+      <div class="hero-label">Kristen Hansen · GM of Courses</div>
+    </div>
+    <div class="fade-up fade-up-2">
+      <h1>Kristen's<br><em>AI Automation</em><br>Portfolio</h1>
+    </div>
+    <div class="hero-meta fade-up fade-up-3">
+      <span>April 21, 2026</span>
+      <span style="color: var(--color-muted)">·</span>
+      <span>Sprint 1 Automation Portfolio</span>
+      <span style="color: var(--color-muted)">·</span>
+      <span>Built in L2</span>
+    </div>
+  </section>
+
+  <!-- TIME SUMMARY -->
+  <div class="section-dark-wrap">
+    <div class="section-dark">
+      <div class="learnings-grid">
+        <div class="learning-card">
+          <div class="learning-number">01</div>
+          <h3>AI-native, but gains going to delivery — not scale</h3>
+          <p>28h Chrome + 26.8h Claude Code weekly. The tools are there. The problem is what I'm using them for: sessions, slides, and live requests instead of systems that work without me.</p>
+        </div>
+        <div class="learning-card">
+          <div class="learning-number">02</div>
+          <h3>Answering bot-level questions at GM cost</h3>
+          <p>Slack pattern analysis shows a material chunk of async time going to student support, logistics, and status questions that a well-built bot could handle automatically — no judgment required.</p>
+        </div>
+        <div class="learning-card">
+          <div class="learning-number">03</div>
+          <h3>946 average context switches per day</h3>
+          <p>Chrome history shows fragmented attention across Notion, Gmail, Calendar, Slack, and HubSpot. Deep work on L3–L5 curriculum design isn't happening because the environment doesn't protect it.</p>
+        </div>
+      </div>
+
+      <a href="time-audit.html" class="audit-link">
+        View full time audit →
+      </a>
+    </div>
+  </div>
+
+  <!-- WHAT I'M BUILDING -->
+  <section class="section-light">
+    <div class="container">
+      <div class="section-header">
+        <h2>What I'm<br>building</h2>
+        <p>Six automations, ranked by hours saved × goal alignment. Sprint 1 target: ship all six before cohort close.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- CARD 1 -->
+        <div class="auto-card">
+          <div class="card-rank">1</div>
+          <div class="card-badge badge-medium">Medium lift</div>
+          <div class="card-title">Student support bot</div>
+          <div class="card-outcome">Students get instant answers. I stop being the first line of support.</div>
+          <div class="card-rows">
+            <div class="card-row">
+              <span class="card-row-label">Today</span>
+              <span class="card-row-value">I personally respond to Slack questions about tools, assignments, and logistics — often within minutes.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Automated</span>
+              <span class="card-row-value">Claude agent with access to course docs, FAQs, and cohort context answers in the student channel 24/7.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Effort</span>
+              <span class="card-row-value">Build knowledge base + Claude agent + Slack integration</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="hours-badge">3h<span style="font-size:18px;color:#888">/wk</span></div>
+              <div class="hours-label">Recovered</div>
+            </div>
+            <div class="status-badge"><div class="status-dot"></div>Not started</div>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="auto-card">
+          <div class="card-rank">2</div>
+          <div class="card-badge badge-quick">Quick win</div>
+          <div class="card-title">Onboarding comms</div>
+          <div class="card-outcome">Every new student gets a perfect welcome sequence without me touching it.</div>
+          <div class="card-rows">
+            <div class="card-row">
+              <span class="card-row-label">Today</span>
+              <span class="card-row-value">Manual welcome emails, tool setup reminders, and pre-work nudges assembled and sent one cohort at a time.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Automated</span>
+              <span class="card-row-value">n8n workflow triggers on enrollment → sequences personalized emails, Slack invite, and reminder cadence automatically.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Effort</span>
+              <span class="card-row-value">Draft template sequence + build n8n trigger flow</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="hours-badge">2h<span style="font-size:18px;color:#888">/wk</span></div>
+              <div class="hours-label">Recovered</div>
+            </div>
+            <div class="status-badge"><div class="status-dot"></div>Not started</div>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="auto-card">
+          <div class="card-rank">3</div>
+          <div class="card-badge badge-medium">Medium lift</div>
+          <div class="card-title">Instructor coordination</div>
+          <div class="card-outcome">Instructors are prepped and confirmed without a single manual Slack thread from me.</div>
+          <div class="card-rows">
+            <div class="card-row">
+              <span class="card-row-label">Today</span>
+              <span class="card-row-value">I manually ping instructors, share session guides, confirm availability, and follow up before each session.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Automated</span>
+              <span class="card-row-value">Scheduled Claude agent reads calendar, pulls session guide, drafts and sends prep brief to instructor 48h before each session.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Effort</span>
+              <span class="card-row-value">Build prep brief template + Claude routine with calendar + Slack write access</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="hours-badge">2h<span style="font-size:18px;color:#888">/wk</span></div>
+              <div class="hours-label">Recovered</div>
+            </div>
+            <div class="status-badge"><div class="status-dot"></div>Not started</div>
+          </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="auto-card">
+          <div class="card-rank">4</div>
+          <div class="card-badge badge-quick">Quick win</div>
+          <div class="card-title">L3–L5 protected time</div>
+          <div class="card-outcome">Deep curriculum work happens on a schedule, not by accident.</div>
+          <div class="card-rows">
+            <div class="card-row">
+              <span class="card-row-label">Today</span>
+              <span class="card-row-value">L3–L5 design gets pushed by meetings. No recurring blocks. Context-switching kills momentum before it starts.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Automated</span>
+              <span class="card-row-value">Calendar automation creates recurring deep-work blocks, declines conflicts below priority threshold, and sends EOW curriculum summary to manager.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Effort</span>
+              <span class="card-row-value">Set calendar rules + build EOW summary Claude routine</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="hours-badge">3h<span style="font-size:18px;color:#888">/wk</span></div>
+              <div class="hours-label">Freed</div>
+            </div>
+            <div class="status-badge"><div class="status-dot"></div>Not started</div>
+          </div>
+        </div>
+
+        <!-- CARD 5 -->
+        <div class="auto-card">
+          <div class="card-rank">5</div>
+          <div class="card-badge badge-medium">Medium lift</div>
+          <div class="card-title">Session debrief automation</div>
+          <div class="card-outcome">Every session produces a structured debrief without a separate meeting or doc sprint.</div>
+          <div class="card-rows">
+            <div class="card-row">
+              <span class="card-row-label">Today</span>
+              <span class="card-row-value">Post-session notes are scattered across Slack, Granola, and memory. Curriculum improvements don't get captured systematically.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Automated</span>
+              <span class="card-row-value">Claude reads Granola transcript + Slack thread post-session → generates structured debrief → posts to Notion with action items and curriculum flags.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Effort</span>
+              <span class="card-row-value">Build debrief template + Claude agent with Granola + Notion write access</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="hours-badge">1.5h<span style="font-size:18px;color:#888">/wk</span></div>
+              <div class="hours-label">Recovered</div>
+            </div>
+            <div class="status-badge"><div class="status-dot"></div>Not started</div>
+          </div>
+        </div>
+
+        <!-- CARD 6 -->
+        <div class="auto-card">
+          <div class="card-rank">6</div>
+          <div class="card-badge badge-quick">Quick win</div>
+          <div class="card-title">Revenue pulse briefing</div>
+          <div class="card-outcome">Monday starts with a clear revenue picture, automatically.</div>
+          <div class="card-rows">
+            <div class="card-row">
+              <span class="card-row-label">Today</span>
+              <span class="card-row-value">Revenue tracking is manual — pulling Databricks numbers, comparing to targets, and assembling a weekly update by hand.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Automated</span>
+              <span class="card-row-value">n8n cron every Monday 8am → queries leland_analytics.ai.bookings → Claude formats vs. target summary → posts to Slack #courses-revenue.</span>
+            </div>
+            <div class="card-row">
+              <span class="card-row-label">Effort</span>
+              <span class="card-row-value">Write Databricks query + build n8n cron + Claude formatting step</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="hours-badge">1h<span style="font-size:18px;color:#888">/wk</span></div>
+              <div class="hours-label">Recovered</div>
+            </div>
+            <div class="status-badge"><div class="status-dot"></div>Not started</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MY SYSTEM -->
+  <div class="my-system-wrap">
+    <div class="my-system-inner">
+      <h2>My system</h2>
+      <p class="system-subtitle">Six sprints. One portfolio. Built across the AI Builder program.</p>
+
+      <div class="system-grid">
+
+        <div class="sprint-card sprint-1-card">
+          <div class="sprint-label">Sprint 1 · Now</div>
+          <div class="sprint-title">Automation portfolio</div>
+          <div class="sprint-pill">In progress</div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-label">Sprint 2</div>
+          <div class="sprint-title">Deployed website + data tool</div>
+          <div class="sprint-pill">Coming soon</div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-label">Sprint 3</div>
+          <div class="sprint-title">n8n or Claude routines</div>
+          <div class="sprint-pill">Coming soon</div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-label">Sprint 4</div>
+          <div class="sprint-title">Knowledge wiki</div>
+          <div class="sprint-pill">Coming soon</div>
+        </div>
+
+        <div class="sprint-card">
+          <div class="sprint-label">Sprint 5</div>
+          <div class="sprint-title">Custom agentic workflow</div>
+          <div class="sprint-pill">Coming soon</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>AI Builder Automation Portfolio — April 21, 2026 &nbsp;·&nbsp; Built in L2</p>
+  </footer>
+
+</body>
+</html>
